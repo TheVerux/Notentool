@@ -11,9 +11,9 @@ namespace Notentool
 	public class Context : DbContext
 	{
 		private string ConnectionString { get; set; }
-		public Context(string connectionString)
+		public Context(DbContextOptions options): base(options)
 		{
-			ConnectionString = connectionString;
+
 		}
 
 		public DbSet<Benutzeraccount> Benutzeraccounts { get; set; }
@@ -24,12 +24,31 @@ namespace Notentool
 
 		public DbSet<Grade> Grades { get; set; }
 
-		/*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
-			if (!optionsBuilder.IsConfigured)
-			{
-				optionsBuilder.UseSqlServer(ConnectionString);
-			}
-		}*/
+			modelBuilder.Entity<Benutzeraccount>()
+				.ToTable("Benutzeraccount");
+
+			modelBuilder.Entity<Semester>()
+				.ToTable("Semester");
+
+			modelBuilder.Entity<Modul>()
+				.ToTable("Modul");
+
+			modelBuilder.Entity<Grade>()
+				.ToTable("Grade");
+
+			modelBuilder.Entity<Benutzeraccount>()
+				.HasMany(b => b.Semesters)
+				.WithOne(s => s.Benutzeraccount);
+
+			modelBuilder.Entity<Semester>()
+				.HasMany(s => s.Moduls)
+				.WithOne(m => m.Semester);
+
+			modelBuilder.Entity<Modul>()
+				.HasMany(m => m.Grades)
+				.WithOne(g => g.Modul);
+		}
 	}
 }

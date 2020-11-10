@@ -7,7 +7,7 @@ namespace Notentool.Models.Entities
 {
 	public class Semester
 	{
-		public int Id { get; set; }
+		public int SemesterID { get; set; }
 
 		public string Name { get; set; }
 

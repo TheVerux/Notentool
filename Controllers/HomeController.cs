@@ -24,7 +24,7 @@ namespace Notentool.Controllers
 
         public IActionResult Index()
         {
-	        var users = _context.Benutzeraccounts.ToList();
+	        var users = _context.Moduls.ToList();
             return View();
         }
 

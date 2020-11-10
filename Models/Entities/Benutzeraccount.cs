@@ -7,7 +7,7 @@ namespace Notentool.Models.Entities
 {
 	public class Benutzeraccount
 	{
-		public int Id { get; set; }
+		public int BenutzeraccountID { get; set; }
 
 		public string Benutzername { get; set; }
 

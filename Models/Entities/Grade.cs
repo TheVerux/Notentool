@@ -7,9 +7,9 @@ namespace Notentool.Models.Entities
 {
 	public class Grade
 	{
-		public int Id { get; set; }
+		public int GradeID { get; set; }
 
-		public string Name { get; set; }
+		// public string Name { get; set; }
 
 		public double Note { get; set; }
 
