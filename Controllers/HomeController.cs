@@ -14,14 +14,17 @@ namespace Notentool.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly Context _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, Context context)
         {
             _logger = logger;
+            _context = context;
         }
 
         public IActionResult Index()
         {
+	        var users = _context.Benutzeraccounts.ToList();
             return View();
         }
 
