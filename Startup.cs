@@ -18,6 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Notentool.Settings;
+using Notentool.Models.Entities;
 
 namespace Notentool
 {
@@ -83,6 +84,11 @@ namespace Notentool
             services.AddDbContext<Context>(options =>
 	            options.UseSqlServer(
 		            Configuration.GetConnectionString("DefaultConnection")));
+            services.AddIdentityCore<Benutzeraccount>()
+                .AddRoles<UserRole>()
+                .AddEntityFrameworkStores<Context>()
+                .AddSignInManager<SignInManager<Benutzeraccount>>()
+                .AddRoleManager<RoleManager<UserRole>>();
             // services.AddScoped<Context>();
         }
 

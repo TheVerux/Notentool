@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Notentool.Models.Entities;
 
 namespace Notentool
 {
-	public class Context : DbContext
+	public class Context : IdentityDbContext<Benutzeraccount, UserRole, int>
 	{
 		private string ConnectionString { get; set; }
 		public Context(DbContextOptions options): base(options)
@@ -37,18 +38,6 @@ namespace Notentool
 
 			modelBuilder.Entity<Grade>()
 				.ToTable("Grade");
-
-			modelBuilder.Entity<Benutzeraccount>()
-				.HasMany(b => b.Semesters)
-				.WithOne(s => s.Benutzeraccount);
-
-			modelBuilder.Entity<Semester>()
-				.HasMany(s => s.Moduls)
-				.WithOne(m => m.Semester);
-
-			modelBuilder.Entity<Modul>()
-				.HasMany(m => m.Grades)
-				.WithOne(g => g.Modul);
 		}
 	}
 }

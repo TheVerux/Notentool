@@ -7,7 +7,7 @@ namespace Notentool.Models.Entities
 {
 	public class Modul
 	{
-		public int modulID { get; set; }
+		public int ModulID { get; set; }
 
 		public string Name { get; set; }
 
