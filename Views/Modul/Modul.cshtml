@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = "Modul";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+
+@using (Html.BeginForm("ModulErstellen", "Modul", FormMethod.Post))
+{
+    <!-- form goes here -->
+
+    <table>
+        <tr>
+            <td>
+                @Html.Label("Modulname")
+            </td>
+            <td>
+                @Html.TextBoxFor(modul => modul.name)
+            </td>
+        </tr>
+    </table>
+
+    <input type="submit" value="Modul hinzufügen"/>
+
+}

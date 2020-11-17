@@ -14,10 +14,12 @@ namespace Notentool.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly Context _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, Context context)
         {
             _logger = logger;
+            _context = context;
         }
 
         public IActionResult Index()
@@ -39,6 +41,21 @@ namespace Notentool.Controllers
         {
             return View();
         }
+
+        [HttpGet]
+        public ActionResult FriendDetail()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult ModulErstellen(Modul modul)
+        {
+            _context.Moduls.Add(modul);
+            _context.SaveChanges();
+            return View();
+        }
+
 
         [AllowAnonymous]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
