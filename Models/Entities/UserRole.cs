@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Notentool.Models.Entities
 {
-    public class UserRole : IdentityRole<int>
+    public class UserRole : IdentityRole
     {
         public UserRole()
             : base()

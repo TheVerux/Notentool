@@ -9,12 +9,12 @@ using Notentool.Models.Entities;
 
 namespace Notentool
 {
-	public class Context : IdentityDbContext<Benutzeraccount, UserRole, int>
+	public class Context : IdentityDbContext<Benutzeraccount, UserRole, string>
 	{
 		private string ConnectionString { get; set; }
 		public Context(DbContextOptions options): base(options)
 		{
-
+			Database.EnsureCreated();
 		}
 
 		public DbSet<Benutzeraccount> Benutzeraccounts { get; set; }
@@ -27,17 +27,16 @@ namespace Notentool
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
-			modelBuilder.Entity<Benutzeraccount>()
-				.ToTable("Benutzeraccount");
-
-			modelBuilder.Entity<Semester>()
+			/*modelBuilder.Entity<Semester>()
 				.ToTable("Semester");
 
 			modelBuilder.Entity<Modul>()
 				.ToTable("Modul");
 
 			modelBuilder.Entity<Grade>()
-				.ToTable("Grade");
+				.ToTable("Grade");*/
+			
+			base.OnModelCreating(modelBuilder);
 		}
 	}
 }

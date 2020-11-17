@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Notentool.Models;
 using Notentool.Models.Entities;
+using Notentool.Services;
 
 namespace Notentool.Controllers
 {
@@ -18,21 +19,18 @@ namespace Notentool.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly Context _context;
-        private readonly UserManager<Benutzeraccount> _userManager;
+        private readonly IUserService _userService;
 
-        public HomeController(ILogger<HomeController> logger, Context context, UserManager<Benutzeraccount> userManager)
+        public HomeController(ILogger<HomeController> logger, Context context, IUserService userService)
         {
             _logger = logger;
             _context = context;
-            _userManager = userManager;
+            _userService = userService;
         }
 
         public async Task<IActionResult> Index()
         {
-            // var result = await _userManager.CreateAsync(User, "stinni59$2001");
-            var usersss = User;
-            var user = User.FindFirst(ClaimTypes.NameIdentifier);
-            var identity =  User.Identity;
+            var user = await _userService.GetOrCreateUser(User);
             return View();
         }
 

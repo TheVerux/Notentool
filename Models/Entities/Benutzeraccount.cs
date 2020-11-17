@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Notentool.Models.Entities
 {
-	public class Benutzeraccount : IdentityUser<int>
+	public class Benutzeraccount : IdentityUser
 	{
 		public ICollection<Semester> Semesters { get; set; }
 	}

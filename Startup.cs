@@ -19,6 +19,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Notentool.Settings;
 using Notentool.Models.Entities;
+using Notentool.Services;
 
 namespace Notentool
 {
@@ -88,8 +89,9 @@ namespace Notentool
                 .AddRoles<UserRole>()
                 .AddEntityFrameworkStores<Context>()
                 .AddSignInManager<SignInManager<Benutzeraccount>>()
-                .AddRoleManager<RoleManager<UserRole>>();
-            // services.AddScoped<Context>();
+                .AddRoleManager<RoleManager<UserRole>>()
+                .AddUserManager<UserManager<Benutzeraccount>>();
+            services.AddTransient<IUserService, UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
