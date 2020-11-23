@@ -39,11 +39,38 @@ namespace Notentool.Controllers
             return View();
         }
 
+        public IActionResult Modul()
+        {
+            return View();
+        }
+
+        public IActionResult Note()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public ActionResult FriendDetail()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult ModulErstellen(Modul modul)
+        {
+            _context.Moduls.Add(modul);
+            _context.SaveChanges();
+            return View();
+        }
+
+
         [AllowAnonymous]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+
     }
 }
