@@ -9,11 +9,17 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Notentool.Settings;
+using Notentool.Models.Entities;
+using Notentool.Services;
 
 namespace Notentool
 {
@@ -75,6 +81,17 @@ namespace Notentool
                 options.Filters.Add(new AuthorizeFilter(policy));
             });
             services.AddRazorPages();
+            services.Configure<ConnectionSettings>(Configuration.GetSection("ConnectionStrings"));
+            services.AddDbContext<Context>(options =>
+	            options.UseSqlServer(
+		            Configuration.GetConnectionString("DefaultConnection")));
+            services.AddIdentityCore<Benutzeraccount>()
+                .AddRoles<UserRole>()
+                .AddEntityFrameworkStores<Context>()
+                .AddSignInManager<SignInManager<Benutzeraccount>>()
+                .AddRoleManager<RoleManager<UserRole>>()
+                .AddUserManager<UserManager<Benutzeraccount>>();
+            services.AddTransient<IUserService, UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
