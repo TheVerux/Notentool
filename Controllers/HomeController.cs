@@ -40,16 +40,6 @@ namespace Notentool.Controllers
             return View();
         }
 
-        public IActionResult Modul()
-        {
-            return View();
-        }
-
-        public IActionResult Note()
-        {
-            return View();
-        }
-
         [AllowAnonymous]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
