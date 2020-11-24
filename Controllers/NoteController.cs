@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Notentool.Models.Entities;
+using System.Threading.Tasks;
 
 namespace Notentool.Controllers
 {
@@ -16,13 +17,20 @@ namespace Notentool.Controllers
         {
             return View();
         }
-        
+
         [HttpPost]
-        public IActionResult NoteErstellen(Grade grade)
+        public async Task<ActionResult> NoteErstellen(Modul modul, Grade grade)
         {
-            _context.Grades.Add(grade);
+            //Fetching Grade Records in LIST Collection format.
+            var a = _context.Grades.AddAsync(grade);
+            modul.Grades.Add(grade);
+            _context.Moduls.Update(modul);
+
+            //Creating ViewBag named ModulListItem to used in VIEW.  
+            ViewBag.ModulListItem = ModulController.ToSelectListModul(grades);
+            _context.Moduls.Add(grades);
             _context.SaveChanges();
-            return Ok();
+            return View();
         }
     }
 }
