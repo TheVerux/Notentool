@@ -4,7 +4,6 @@
 
 <h1>@ViewData["Title"]</h1>
 
-
 @using (Html.BeginForm("ModulErstellen", "Modul", FormMethod.Post))
 {
     <!-- form goes here -->
@@ -16,6 +15,9 @@
             </td>
             <td>
                 @Html.TextBoxFor(modul => modul.name)
+            </td>
+            <td>
+                @Html.DropDownListFor(model => model.semesterID, ViewBag.SemesterListItem as SelectList, new { @class = "form-control" })
             </td>
         </tr>
     </table>
