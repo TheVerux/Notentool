@@ -1,10 +1,13 @@
-﻿@model IEnumerable<Notentool.Models.Entities.Modul>
+﻿@using Notentool.Models.Entities
+@model IEnumerable<Notentool.Models.Entities.Modul>
 
 @{
     ViewData["Title"] = "Index";
+    var semester = ViewData["Semester"] as Semester;
 }
 
 <h1>Index</h1>
+<h2>Currently in semester @semester.Name @semester.SemesterID</h2>
 
 <p>
     <a asp-action="Create">Create New</a>

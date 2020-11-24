@@ -21,17 +21,20 @@ namespace Notentool.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly Context _context;
         private readonly IUserService _userService;
+        private readonly RoleManager<UserRole> _roleManager;
+        private readonly UserManager<Benutzeraccount> _userManager;
 
-        public HomeController(ILogger<HomeController> logger, Context context, IUserService userService)
+        public HomeController(ILogger<HomeController> logger, Context context, IUserService userService, RoleManager<UserRole> roleManager, UserManager<Benutzeraccount> userManager)
         {
             _logger = logger;
             _context = context;
             _userService = userService;
+            _roleManager = roleManager;
+            _userManager = userManager;
         }
 
         public async Task<IActionResult> Index()
         {
-            var user = await _userService.GetOrCreateUser(User);
             return View();
         }
 

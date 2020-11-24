@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using Notentool.Models.Entities;
 
 namespace Notentool.Controllers
 {
+    [Route("semesters/{semesterId}/[controller]/[action]")]
     public class ModulsController : Controller
     {
         private readonly Context _context;
@@ -20,13 +22,16 @@ namespace Notentool.Controllers
         }
 
         // GET: Moduls
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int semesterId)
         {
+            var semester =  _context.Semesters.ToList().FirstOrDefault(s => s.SemesterID == semesterId);
+
+            ViewData["Semester"] = semester;
             return View(await _context.Moduls.ToListAsync());
         }
 
         // GET: Moduls/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int semesterId, int? id)
         {
             if (id == null)
             {
@@ -54,7 +59,7 @@ namespace Notentool.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ModulID,Name")] Modul modul)
+        public async Task<IActionResult> Create(int semesterId, [Bind("ModulID,Name")] Modul modul)
         {
             if (ModelState.IsValid)
             {
@@ -66,7 +71,7 @@ namespace Notentool.Controllers
         }
 
         // GET: Moduls/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int semesterId, int? id)
         {
             if (id == null)
             {
@@ -86,7 +91,7 @@ namespace Notentool.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ModulID,Name")] Modul modul)
+        public async Task<IActionResult> Edit(int semesterId, int id, [Bind("ModulID,Name")] Modul modul)
         {
             if (id != modul.ModulID)
             {
@@ -117,7 +122,7 @@ namespace Notentool.Controllers
         }
 
         // GET: Moduls/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int semesterId, int? id)
         {
             if (id == null)
             {
@@ -137,7 +142,7 @@ namespace Notentool.Controllers
         // POST: Moduls/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int semesterId, int id)
         {
             var modul = await _context.Moduls.FindAsync(id);
             _context.Moduls.Remove(modul);
