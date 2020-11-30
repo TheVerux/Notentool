@@ -2,30 +2,39 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Notentool;
 using Notentool.Models.Entities;
+using Notentool.Services;
 
 namespace Notentool.Controllers
 {
+    [Authorize]
+    [Route("[controller]")]
     public class SemestersController : Controller
     {
         private readonly Context _context;
+        private readonly IUserService _userService;
 
-        public SemestersController(Context context)
+        public SemestersController(Context context, IUserService userService)
         {
             _context = context;
+            _userService = userService;
         }
 
-        // GET: Semesters
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Semesters.ToListAsync());
+            var user = await _userService.GetOrCreateUser(User);
+            var semesters = await _context.Semesters.Where(s => s.Benutzeraccount.Id == user.Id).ToListAsync();
+            return View(semesters);
         }
 
-        // GET: Semesters/Details/5
+        [HttpGet]
+        [Route("{id}")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -43,21 +52,22 @@ namespace Notentool.Controllers
             return View(semester);
         }
 
-        // GET: Semesters/Create
+        [HttpGet]
+        [Route("create")]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Semesters/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("create")]
         public async Task<IActionResult> Create([Bind("SemesterID,Name")] Semester semester)
         {
             if (ModelState.IsValid)
             {
+                var user = await _userService.GetOrCreateUser(User);
+                semester.Benutzeraccount = user;
                 _context.Add(semester);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -65,7 +75,8 @@ namespace Notentool.Controllers
             return View(semester);
         }
 
-        // GET: Semesters/Edit/5
+        [HttpGet]
+        [Route("edit/{id}")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -81,11 +92,9 @@ namespace Notentool.Controllers
             return View(semester);
         }
 
-        // POST: Semesters/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("edit/{id}")]
         public async Task<IActionResult> Edit(int id, [Bind("SemesterID,Name")] Semester semester)
         {
             if (id != semester.SemesterID)
@@ -97,6 +106,11 @@ namespace Notentool.Controllers
             {
                 try
                 {
+                    if (semester.Benutzeraccount == null)
+                    {
+                        var user = await _userService.GetOrCreateUser(User);
+                        semester.Benutzeraccount = user;
+                    }
                     _context.Update(semester);
                     await _context.SaveChangesAsync();
                 }
@@ -116,7 +130,8 @@ namespace Notentool.Controllers
             return View(semester);
         }
 
-        // GET: Semesters/Delete/5
+        [HttpGet]
+        [Route("delete/{id}")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -134,9 +149,9 @@ namespace Notentool.Controllers
             return View(semester);
         }
 
-        // POST: Semesters/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Route("delete/{id}")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var semester = await _context.Semesters.FindAsync(id);

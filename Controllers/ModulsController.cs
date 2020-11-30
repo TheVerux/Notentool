@@ -11,7 +11,8 @@ using Notentool.Models.Entities;
 
 namespace Notentool.Controllers
 {
-    [Route("semesters/{semesterId}/[controller]/[action]")]
+    [Authorize]
+    [Route("semesters/{semesterId}/[controller]")]
     public class ModulsController : Controller
     {
         private readonly Context _context;
@@ -21,16 +22,18 @@ namespace Notentool.Controllers
             _context = context;
         }
 
-        // GET: Moduls
+        [HttpGet]
         public async Task<IActionResult> Index(int semesterId)
         {
-            var semester =  _context.Semesters.ToList().FirstOrDefault(s => s.SemesterID == semesterId);
+            var semester = await _context.Semesters.FirstOrDefaultAsync(s => s.SemesterID == semesterId);
 
             ViewData["Semester"] = semester;
-            return View(await _context.Moduls.ToListAsync());
+            var moduls = await _context.Moduls.Where(m => m.Semester.SemesterID == semesterId).ToListAsync();
+            return View(moduls);
         }
 
-        // GET: Moduls/Details/5
+        [HttpGet]
+        [Route("{id}")]
         public async Task<IActionResult> Details(int semesterId, int? id)
         {
             if (id == null)
@@ -48,29 +51,32 @@ namespace Notentool.Controllers
             return View(modul);
         }
 
-        // GET: Moduls/Create
-        public IActionResult Create()
+        [HttpGet]
+        [Route("create")]
+        public IActionResult Create(int semesterId)
         {
             return View();
         }
 
-        // POST: Moduls/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("create")]
         public async Task<IActionResult> Create(int semesterId, [Bind("ModulID,Name")] Modul modul)
         {
             if (ModelState.IsValid)
             {
+                var semester = await _context.Semesters.FirstOrDefaultAsync(s => s.SemesterID == semesterId);
+                modul.Semester = semester;
                 _context.Add(modul);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToRoute($"semesters/{semesterId}/moduls");
+                //return RedirectToAction(nameof(Index), semesterId);
             }
             return View(modul);
         }
 
-        // GET: Moduls/Edit/5
+        [HttpGet]
+        [Route("edit/{id}")]
         public async Task<IActionResult> Edit(int semesterId, int? id)
         {
             if (id == null)
@@ -86,11 +92,9 @@ namespace Notentool.Controllers
             return View(modul);
         }
 
-        // POST: Moduls/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("edit/{id}")]
         public async Task<IActionResult> Edit(int semesterId, int id, [Bind("ModulID,Name")] Modul modul)
         {
             if (id != modul.ModulID)
@@ -102,6 +106,11 @@ namespace Notentool.Controllers
             {
                 try
                 {
+                    if (modul.Semester == null)
+                    {
+                        var semester = await _context.Semesters.FirstOrDefaultAsync(s => s.SemesterID == semesterId);
+                        modul.Semester = semester;
+                    }
                     _context.Update(modul);
                     await _context.SaveChangesAsync();
                 }
@@ -116,12 +125,13 @@ namespace Notentool.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), semesterId);
             }
             return View(modul);
         }
 
-        // GET: Moduls/Delete/5
+        [HttpGet]
+        [Route("delete/{id}")]
         public async Task<IActionResult> Delete(int semesterId, int? id)
         {
             if (id == null)
@@ -139,15 +149,15 @@ namespace Notentool.Controllers
             return View(modul);
         }
 
-        // POST: Moduls/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Route("delete/{id}")]
         public async Task<IActionResult> DeleteConfirmed(int semesterId, int id)
         {
             var modul = await _context.Moduls.FindAsync(id);
             _context.Moduls.Remove(modul);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), semesterId);
         }
 
         private bool ModulExists(int id)
