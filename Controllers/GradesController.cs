@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,8 @@ using Notentool.Models.Entities;
 
 namespace Notentool.Controllers
 {
+    [Authorize]
+    [Route("moduls/{modulId}/[controller]")]
     public class GradesController : Controller
     {
         private readonly Context _context;
@@ -19,14 +22,18 @@ namespace Notentool.Controllers
             _context = context;
         }
 
-        // GET: Grades
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        public async Task<IActionResult> Index(int modulId)
         {
-            return View(await _context.Grades.ToListAsync());
+            var modul = await _context.Moduls.FirstOrDefaultAsync(m => m.ModulID == modulId);
+
+            var grades = await _context.Grades.Where(g => g.Modul.ModulID == modulId).ToListAsync();
+            return View(grades);
         }
 
-        // GET: Grades/Details/5
-        public async Task<IActionResult> Details(int? id)
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<IActionResult> Details(int modulId, int? id)
         {
             if (id == null)
             {
@@ -43,21 +50,22 @@ namespace Notentool.Controllers
             return View(grade);
         }
 
-        // GET: Grades/Create
-        public IActionResult Create()
+        [HttpGet]
+        [Route("create")]
+        public IActionResult Create(int modulId)
         {
             return View();
         }
 
-        // POST: Grades/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("GradeID,Name,Note,Gewichtung")] Grade grade)
+        [Route("create")]
+        public async Task<IActionResult> Create(int modulId, [Bind("GradeID,Name,Note,Gewichtung")] Grade grade)
         {
             if (ModelState.IsValid)
             {
+                var modul = await _context.Moduls.FirstOrDefaultAsync(m => m.ModulID == modulId);
+                grade.Modul = modul;
                 _context.Add(grade);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -65,8 +73,9 @@ namespace Notentool.Controllers
             return View(grade);
         }
 
-        // GET: Grades/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        [HttpGet]
+        [Route("edit/{id}")]
+        public async Task<IActionResult> Edit(int modulId, int? id)
         {
             if (id == null)
             {
@@ -81,12 +90,10 @@ namespace Notentool.Controllers
             return View(grade);
         }
 
-        // POST: Grades/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("GradeID,Name,Note,Gewichtung")] Grade grade)
+        [Route("edit/{id}")]
+        public async Task<IActionResult> Edit(int modulId, int id, [Bind("GradeID,Name,Note,Gewichtung")] Grade grade)
         {
             if (id != grade.GradeID)
             {
@@ -97,6 +104,11 @@ namespace Notentool.Controllers
             {
                 try
                 {
+                    if (grade.Modul == null)
+                    {
+                        var modul = await _context.Moduls.FirstOrDefaultAsync(m => m.ModulID == modulId);
+                        grade.Modul = modul;
+                    }
                     _context.Update(grade);
                     await _context.SaveChangesAsync();
                 }
@@ -116,8 +128,9 @@ namespace Notentool.Controllers
             return View(grade);
         }
 
-        // GET: Grades/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        [HttpGet]
+        [Route("delete/{id}")]
+        public async Task<IActionResult> Delete(int modulId, int? id)
         {
             if (id == null)
             {
@@ -134,10 +147,10 @@ namespace Notentool.Controllers
             return View(grade);
         }
 
-        // POST: Grades/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        [Route("delete/{id}")]
+        public async Task<IActionResult> DeleteConfirmed(int modulId, int id)
         {
             var grade = await _context.Grades.FindAsync(id);
             _context.Grades.Remove(grade);

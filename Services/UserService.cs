@@ -1,4 +1,6 @@
-﻿using System.Security.Claims;
+﻿using System;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Notentool.Models.Entities;
@@ -14,17 +16,27 @@ namespace Notentool.Services
             _userManager = userManager;
         }
 
-        public async Task<Benutzeraccount> GetOrCreateUser(ClaimsPrincipal user)
+        public async Task<Benutzeraccount> GetOrCreateUser(ClaimsPrincipal claims)
         {
-            // Todo: if user doesn't exist, create new user
-            /*var newUser = new Benutzeraccount()
+            var userId = claims.Claims.FirstOrDefault(c => c.Type == "http://schemas.microsoft.com/identity/claims/objectidentifier")?.Value;
+            if (userId == null)
             {
-                UserName = user.Identity.Name,
-                Email = user.Identity.Name
-            };
-            await _userManager.CreateAsync(newUser);
-            await _userManager.AddClaimsAsync(newUser, user.Claims);*/
-            return await _userManager.GetUserAsync(user);
+                userId = new Guid().ToString();
+            }
+            Benutzeraccount user = _userManager.Users.FirstOrDefault(u => u.Id == userId);
+            if (user == null)
+            {
+                user = new Benutzeraccount()
+                {
+                    Email = claims.Identity.Name,
+                    UserName = claims.Identity.Name,
+                    Id = userId
+                };
+                await _userManager.CreateAsync(user);
+                await _userManager.AddClaimsAsync(user, claims.Claims);
+                var users = _userManager.Users;
+            }
+            return user;
         }
     }
 }
