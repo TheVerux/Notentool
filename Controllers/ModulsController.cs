@@ -69,8 +69,7 @@ namespace Notentool.Controllers
                 modul.Semester = semester;
                 _context.Add(modul);
                 await _context.SaveChangesAsync();
-                return RedirectToRoute($"semesters/{semesterId}/moduls");
-                //return RedirectToAction(nameof(Index), semesterId);
+                return RedirectToAction(nameof(Index), new { semesterId });
             }
             return View(modul);
         }
@@ -125,7 +124,7 @@ namespace Notentool.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index), semesterId);
+                return RedirectToAction(nameof(Index), new { semesterId });
             }
             return View(modul);
         }
@@ -157,7 +156,7 @@ namespace Notentool.Controllers
             var modul = await _context.Moduls.FindAsync(id);
             _context.Moduls.Remove(modul);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index), semesterId);
+            return RedirectToAction(nameof(Index), new { semesterId });
         }
 
         private bool ModulExists(int id)

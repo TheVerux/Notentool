@@ -31,9 +31,9 @@
         </dd>
     </dl>
     
-    <form asp-action="Delete">
+    <form asp-action="Delete" asp-route-modulId="@ViewContext.RouteData.Values["modulId"]">
         <input type="hidden" asp-for="GradeID" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <a asp-action="Index" asp-route-modulId="@ViewContext.RouteData.Values["modulId"]">Back to List</a>
     </form>
 </div>

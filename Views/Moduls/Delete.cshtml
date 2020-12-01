@@ -19,9 +19,9 @@
         </dd>
     </dl>
     
-    <form asp-action="Delete">
+    <form asp-action="Delete" asp-route-semesterId="@ViewContext.RouteData.Values["semesterId"]">
         <input type="hidden" asp-for="ModulID" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Zurück</a>
+        <a asp-action="Index" asp-route-semesterId="@ViewContext.RouteData.Values["semesterId"]">Zurück</a>
     </form>
 </div>
