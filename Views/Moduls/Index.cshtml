@@ -2,7 +2,7 @@
 @model IEnumerable<Notentool.Models.Entities.Modul>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Module";
     var semester = ViewData["Semester"] as Semester;
 }
 
@@ -32,9 +32,8 @@
             </td>
             <td>
                 <a asp-action="Edit" asp-route-semesterId="@ViewContext.RouteData.Values["semesterId"]" asp-route-id="@item.ModulID">Edit</a> |
-                <a asp-action="Details" asp-route-semesterId="@ViewContext.RouteData.Values["semesterId"]" asp-route-id="@item.ModulID">Details</a> |
                 <a asp-action="Delete" asp-route-semesterId="@ViewContext.RouteData.Values["semesterId"]" asp-route-id="@item.ModulID">Delete</a> |
-                <a asp-area="" asp-controller="Grades" asp-action="Index" asp-route-modulId="@item.ModulID">Grades</a>
+                <a asp-area="" asp-controller="Grades" asp-action="Index" asp-route-modulId="@item.ModulID">Details</a>
             </td>
         </tr>
     }

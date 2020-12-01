@@ -1,13 +1,13 @@
 ﻿@model IEnumerable<Notentool.Models.Entities.Grade>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Noten";
 }
 
-<h1>Index</h1>
+<h1>Deine Noten</h1>
 
 <p>
-    <a asp-action="Create" asp-route-modulId="@ViewContext.RouteData.Values["modulId"]">Create New</a>
+    Erstelle <a asp-action="Create" asp-route-modulId="@ViewContext.RouteData.Values["modulId"]">hier</a> eine neue Note
 </p>
 <table class="table">
     <thead>
