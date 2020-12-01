@@ -68,7 +68,7 @@ namespace Notentool.Controllers
                 grade.Modul = modul;
                 _context.Add(grade);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new { modulId });
             }
             return View(grade);
         }
@@ -123,7 +123,7 @@ namespace Notentool.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new { modulId });
             }
             return View(grade);
         }
@@ -155,7 +155,7 @@ namespace Notentool.Controllers
             var grade = await _context.Grades.FindAsync(id);
             _context.Grades.Remove(grade);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { modulId });
         }
 
         private bool GradeExists(int id)
