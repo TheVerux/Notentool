@@ -8,6 +8,10 @@ namespace Notentool.Models.Entities
 {
 	public class Benutzeraccount : IdentityUser
 	{
-		public ICollection<Semester> Semesters { get; set; }
+        public Benutzeraccount()
+        {
+			Semesters = new HashSet<Semester>();
+        }
+		public virtual ICollection<Semester> Semesters { get; set; }
 	}
 }

@@ -15,6 +15,8 @@ namespace Notentool.Models.Entities
 
 		public double Gewichtung { get; set; }
 
-		public Modul Modul { get; set; }
+		public virtual Modul Modul { get; set; }
+
+        public int ModulID { get; set; }
 	}
 }

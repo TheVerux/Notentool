@@ -28,7 +28,9 @@ namespace Notentool.Controllers
             var semester = await _context.Semesters.FirstOrDefaultAsync(s => s.SemesterID == semesterId);
 
             ViewData["Semester"] = semester;
-            var moduls = await _context.Moduls.Where(m => m.Semester.SemesterID == semesterId).ToListAsync();
+            var moduls = await _context.Moduls.Where(m => m.Semester.SemesterID == semesterId)
+                .Include(m => m.Grades)
+                .ToListAsync();
             return View(moduls);
         }
 

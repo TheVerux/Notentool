@@ -13,29 +13,32 @@ namespace Notentool.Models
             IEnumerable<Grade> grades = new List<Grade>();
             if (semester.Moduls != null)
             {
-                foreach (var modul in semester?.Moduls)
+                foreach (var modul in semester.Moduls)
                 {
-                    if (modul.Grades != null) grades.ToList().AddRange(modul.Grades);
+                    if (modul.Grades != null) grades = grades.Concat(modul.Grades);
                 }
             }
-            if (grades.ToList().Count > 0)
-            {
-                var noten = grades.Select(g => g.Note).AsQueryable();
-                return Queryable.Average(noten);
-            }
+            if (grades.ToList().Count > 0) return grades.WeightedAverage(g => g.Note, g => g.Gewichtung);
             return 0;
         }
 
         public static double CalculateForModul(Modul modul)
         {
             IEnumerable<Grade> grades = new List<Grade>();
-            if (modul.Grades != null) grades.ToList().AddRange(modul.Grades);
-            if (grades.ToList().Count > 0)
-            {
-                var noten = grades.Select(g => g.Note).AsQueryable();
-                return Queryable.Average(noten);
-            }
+            if (modul.Grades != null) grades = grades.Concat(modul.Grades);
+            if (grades.ToList().Count > 0) return grades.WeightedAverage(g => g.Note, g => g.Gewichtung);
             return 0;
+        }
+
+        private static double WeightedAverage<T>(this IEnumerable<T> records, Func<T, double> value, Func<T, double> weight)
+        {
+            double weightedValueSum = records.Sum(x => value(x) * weight(x));
+            double weightSum = records.Sum(x => weight(x));
+
+            if (weightSum != 0)
+                return weightedValueSum / weightSum;
+            else
+                throw new DivideByZeroException("Can't divide by zero!");
         }
     }
 }

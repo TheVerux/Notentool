@@ -6,11 +6,13 @@
     var semester = ViewData["Semester"] as Semester;
 }
 
-<h1>Dein Semester</h1>
-<h2>Momentan befindest du dich im: @semester.Name @semester.SemesterID</h2>
+<div>
+    <h4>Du befindest dich momentan im Semester: <br/>@semester.Name</h4>
+</div>
+<hr/>
 
 <p>
-    <a asp-route-semesterId="@ViewContext.RouteData.Values["semesterId"]" asp-action="Create">Create New</a>
+    <a asp-route-semesterId="@ViewContext.RouteData.Values["semesterId"]" asp-action="Create">Create New Modul</a>
 </p>
 <table class="table">
     <thead>
@@ -22,7 +24,8 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+    @foreach (var item in Model)
+    {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
@@ -34,6 +37,6 @@
                 <a asp-area="" asp-controller="Grades" asp-action="Index" asp-route-modulId="@item.ModulID">Grades</a>
             </td>
         </tr>
-}
+    }
     </tbody>
 </table>

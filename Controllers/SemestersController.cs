@@ -29,7 +29,10 @@ namespace Notentool.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await _userService.GetOrCreateUser(User);
-            var semesters = await _context.Semesters.Where(s => s.Benutzeraccount.Id == user.Id).ToListAsync();
+            var semesters = await _context.Semesters.Where(s => s.Benutzeraccount.Id == user.Id)
+                .Include(s => s.Moduls)
+                .ThenInclude(m => m.Grades)
+                .ToListAsync();
             return View(semesters);
         }
 

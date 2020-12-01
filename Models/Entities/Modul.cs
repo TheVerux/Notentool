@@ -7,12 +7,18 @@ namespace Notentool.Models.Entities
 {
 	public class Modul
 	{
+        public Modul()
+        {
+			Grades = new HashSet<Grade>();
+        }
 		public int ModulID { get; set; }
 
 		public string Name { get; set; }
 
-		public Semester Semester { get; set; }
+		public virtual Semester Semester { get; set; }
 
-		public ICollection<Grade> Grades { get; set; }
+		public int SemesterID { get; set; }
+
+		public virtual ICollection<Grade> Grades { get; set; }
 	}
 }
