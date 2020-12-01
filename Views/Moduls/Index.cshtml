@@ -6,8 +6,8 @@
     var semester = ViewData["Semester"] as Semester;
 }
 
-<h1>Index</h1>
-<h2>Currently in semester @semester.Name @semester.SemesterID</h2>
+<h1>Dein Semester</h1>
+<h2>Momentan befindest du dich im: @semester.Name @semester.SemesterID</h2>
 
 <p>
     <a asp-route-semesterId="@ViewContext.RouteData.Values["semesterId"]" asp-action="Create">Create New</a>
