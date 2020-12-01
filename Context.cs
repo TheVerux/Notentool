@@ -27,15 +27,6 @@ namespace Notentool
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
-			/*modelBuilder.Entity<Semester>()
-				.ToTable("Semester");
-
-			modelBuilder.Entity<Modul>()
-				.ToTable("Modul");
-
-			modelBuilder.Entity<Grade>()
-				.ToTable("Grade");*/
-			
 			base.OnModelCreating(modelBuilder);
 		}
 	}

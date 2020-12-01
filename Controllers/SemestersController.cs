@@ -157,7 +157,10 @@ namespace Notentool.Controllers
         [Route("delete/{id}")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var semester = await _context.Semesters.FindAsync(id);
+            var semester = await _context.Semesters
+                .Include(s => s.Moduls)
+                .ThenInclude(m => m.Grades)
+                .FirstOrDefaultAsync(s => s.SemesterID == id);
             _context.Semesters.Remove(semester);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
