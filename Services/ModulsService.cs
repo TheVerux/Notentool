@@ -7,6 +7,10 @@ using Notentool.Models.Entities;
 
 namespace Notentool.Services
 {
+    /// <summary>
+    /// Implementierung des <c>IModulsService</c>
+    /// Autoren: Gion Rubitschung und Noah Siroh Schönthal
+    /// </summary>
     public class ModulsService : IModulsService
     {
         private readonly Context _context;

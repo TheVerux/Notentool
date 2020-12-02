@@ -12,6 +12,10 @@ using Notentool.Services;
 
 namespace Notentool.Controllers
 {
+    /// <summary>
+    /// Controller Klasse für Module. Handhabt die Logik für die Views der Module.
+    /// Autoren: Gion Rubitschung und Noah Siroh Schönthal
+    /// </summary>
     [Authorize]
     [Route("semesters/{semesterId}/[controller]")]
     public class ModulsController : Controller

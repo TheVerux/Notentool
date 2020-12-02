@@ -12,6 +12,10 @@ using Notentool.Services;
 
 namespace Notentool.Controllers
 {
+    /// <summary>
+    /// Controller Klasse für Semester. Handhabt die Logik für die Views der Semester.
+    /// Autoren: Gion Rubitschung und Noah Siroh Schönthal
+    /// </summary>
     [Authorize]
     [Route("[controller]")]
     public class SemestersController : Controller

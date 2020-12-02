@@ -17,33 +17,28 @@ using Notentool.Services;
 
 namespace Notentool.Controllers
 {
+    /// <summary>
+    /// Default Controller. Steuert die Logik für die Startseiten und default Views.
+    /// Autoren: Gion Rubitschung und Noah Siroh Schönthal
+    /// </summary>
     [Authorize]
     [Route("")]
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-        private readonly Context _context;
         private readonly IUserService _userService;
-        private readonly RoleManager<UserRole> _roleManager;
-        private readonly UserManager<Benutzeraccount> _userManager;
+        private readonly ISemestersService _semestersService;
 
-        public HomeController(ILogger<HomeController> logger, Context context, IUserService userService, RoleManager<UserRole> roleManager, UserManager<Benutzeraccount> userManager)
+        public HomeController(IUserService userService, ISemestersService semestersService)
         {
-            _logger = logger;
-            _context = context;
             _userService = userService;
-            _roleManager = roleManager;
-            _userManager = userManager;
+            _semestersService = semestersService;
         }
 
         [Route("")]
         public async Task<IActionResult> Index()
         {
             var user = await _userService.GetOrCreateUser(User);
-            var semesters = await _context.Semesters.Where(s => s.Benutzeraccount.Id == user.Id)
-                .Include(s => s.Moduls)
-                .ThenInclude(m => m.Grades)
-                .ToListAsync();
+            var semesters = _semestersService.GetAllSemesters(user).ToList();
             var currentSemester = semesters.FirstOrDefault(s => s.SemesterID == semesters.Max(s => s.SemesterID));
             ViewData["Semester"] = currentSemester;
             return View(currentSemester != null ? currentSemester.Moduls : new List<Modul>());
@@ -62,7 +57,5 @@ namespace Notentool.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-
-
     }
 }

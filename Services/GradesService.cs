@@ -5,6 +5,10 @@ using Notentool.Models.Entities;
 
 namespace Notentool.Services
 {
+    /// <summary>
+    /// Implementierung des <c>IGradesService</c>
+    /// Autoren: Gion Rubitschung und Noah Siroh Schönthal
+    /// </summary>
     public class GradesService : IGradesService
     {
         private readonly Context _context;

@@ -8,6 +8,7 @@ namespace Notentool.Models
 {
     /// <summary>
     /// Klasse um den Durchschnitt eines Semesters oder eines Moduls zu berechnen
+    /// Autoren: Gion Rubitschung und Noah Siroh Schönthal
     /// </summary>
     public static class Average
     {
@@ -15,7 +16,7 @@ namespace Notentool.Models
         /// Berechnet den Durchschnitt für ein Semester
         /// </summary>
         /// <param name="semester">Das Semester für welches den Durchschnitt berechnet werden soll</param>
-        /// <returns><c>double</c></returns>
+        /// <returns>Durchschnitt als <c>double</c></returns>
         public static double CalculateForSemester(Semester semester)
         { 
             IEnumerable<Grade> grades = new List<Grade>();
@@ -34,7 +35,7 @@ namespace Notentool.Models
         /// Berechnet den Durchschnitt für ein Modul
         /// </summary>
         /// <param name="modul">Das Modul für welches den Durchschnitt berechnet werden soll</param>
-        /// <returns></returns>
+        /// <returns>Durchschnitt als <c>double</c></returns>
         public static double CalculateForModul(Modul modul)
         {
             IEnumerable<Grade> grades = new List<Grade>();
@@ -43,6 +44,14 @@ namespace Notentool.Models
             return 0;
         }
 
+        /// <summary>
+        /// Berechnet einen Durchschnitt in einer Liste mit einberechnung der Gewichtung
+        /// </summary>
+        /// <typeparam name="T">Der Typ der Liste</typeparam>
+        /// <param name="records">Die Liste an Werten bei welchen der Durchschnitt berechnet werden soll</param>
+        /// <param name="value">Ein Predicate für den Wert</param>
+        /// <param name="weight">Ein Predicate für die Gewichtung</param>
+        /// <returns>Durchschnitt als <c>double</c></returns>
         private static double WeightedAverage<T>(this IEnumerable<T> records, Func<T, double> value, Func<T, double> weight)
         {
             double weightedValueSum = records.Sum(x => value(x) * weight(x));

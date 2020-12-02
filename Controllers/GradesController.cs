@@ -7,6 +7,10 @@ using Notentool.Services;
 
 namespace Notentool.Controllers
 {
+    /// <summary>
+    /// Controller Klasse für Noten. Handhabt die Logik für die Views der Noten.
+    /// Autoren: Gion Rubitschung und Noah Siroh Schönthal
+    /// </summary>
     [Authorize]
     [Route("moduls/{modulId}/[controller]")]
     public class GradesController : Controller

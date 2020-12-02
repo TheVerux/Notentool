@@ -7,6 +7,10 @@ using Notentool.Models.Entities;
 
 namespace Notentool.Services
 {
+    /// <summary>
+    /// Implementierung des <c>ISemestersService</c>
+    /// Autoren: Gion Rubitschung und Noah Siroh Schönthal
+    /// </summary>
     public class SemestersService : ISemestersService
     {
         private readonly Context _context;
@@ -18,7 +22,7 @@ namespace Notentool.Services
 
         public IEnumerable<Semester> GetAllSemesters(Benutzeraccount user)
         {
-            return _context.Semesters.Where(s => s.Benutzeraccount.Id == user.Id)
+            return _context.Semesters.Where(s => s.BenutzeraccountId == user.Id)
                 .Include(s => s.Moduls)
                 .ThenInclude(m => m.Grades);
         }
