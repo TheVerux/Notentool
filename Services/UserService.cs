@@ -34,7 +34,6 @@ namespace Notentool.Services
                 };
                 await _userManager.CreateAsync(user);
                 await _userManager.AddClaimsAsync(user, claims.Claims);
-                var users = _userManager.Users;
             }
             return user;
         }

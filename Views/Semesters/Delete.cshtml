@@ -4,9 +4,11 @@
     ViewData["Title"] = "Löschen";
 }
 
-<h1>Löschen</h1>
-
-<h3>Willst du dies wirklich löschen?</h3>
+<div>
+    <a asp-action="Index">← Zurück zur Semesterübersicht</a>
+</div>
+<h1>Semester @Model.Name löschen</h1>
+<h3>Willst du dieses Semester wirklich löschen?</h3>
 <div>
     <h4>Semester</h4>
     <hr />
@@ -21,7 +23,7 @@
 
     <form asp-action="Delete">
         <input type="hidden" asp-for="SemesterID" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Zurück</a>
+        <input type="submit" value="Löschen" class="btn btn-danger" /> |
+        <a asp-action="Index">Abbrechen</a>
     </form>
 </div>

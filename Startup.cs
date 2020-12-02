@@ -92,6 +92,9 @@ namespace Notentool
                 .AddRoleManager<RoleManager<UserRole>>()
                 .AddUserManager<UserManager<Benutzeraccount>>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<ISemestersService, SemestersService>();
+            services.AddTransient<IModulsService, ModulsService>();
+            services.AddTransient<IGradesService, GradesService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

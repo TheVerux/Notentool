@@ -16,43 +16,21 @@ namespace Notentool.Controllers
     [Route("[controller]")]
     public class SemestersController : Controller
     {
-        private readonly Context _context;
         private readonly IUserService _userService;
+        private readonly ISemestersService _semestersService;
 
-        public SemestersController(Context context, IUserService userService)
+        public SemestersController(IUserService userService, ISemestersService semestersService)
         {
-            _context = context;
             _userService = userService;
+            _semestersService = semestersService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
             var user = await _userService.GetOrCreateUser(User);
-            var semesters = await _context.Semesters.Where(s => s.Benutzeraccount.Id == user.Id)
-                .Include(s => s.Moduls)
-                .ThenInclude(m => m.Grades)
-                .ToListAsync();
+            var semesters =  _semestersService.GetAllSemesters(user);
             return View(semesters);
-        }
-
-        [HttpGet]
-        [Route("{id}")]
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var semester = await _context.Semesters
-                .FirstOrDefaultAsync(m => m.SemesterID == id);
-            if (semester == null)
-            {
-                return NotFound();
-            }
-
-            return View(semester);
         }
 
         [HttpGet]
@@ -70,9 +48,7 @@ namespace Notentool.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _userService.GetOrCreateUser(User);
-                semester.Benutzeraccount = user;
-                _context.Add(semester);
-                await _context.SaveChangesAsync();
+                await _semestersService.CreateSemesterAsync(semester, user);
                 return RedirectToAction(nameof(Index));
             }
             return View(semester);
@@ -87,7 +63,7 @@ namespace Notentool.Controllers
                 return NotFound();
             }
 
-            var semester = await _context.Semesters.FindAsync(id);
+            var semester = await _semestersService.GetSemesterByIdAsync(id.Value);
             if (semester == null)
             {
                 return NotFound();
@@ -109,17 +85,12 @@ namespace Notentool.Controllers
             {
                 try
                 {
-                    if (semester.Benutzeraccount == null)
-                    {
-                        var user = await _userService.GetOrCreateUser(User);
-                        semester.Benutzeraccount = user;
-                    }
-                    _context.Update(semester);
-                    await _context.SaveChangesAsync();
+                    var user = await _userService.GetOrCreateUser(User);
+                    await _semestersService.UpdateSemesterAsync(semester, user);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!SemesterExists(semester.SemesterID))
+                    if (!_semestersService.SemesterExists(semester.SemesterID))
                     {
                         return NotFound();
                     }
@@ -142,8 +113,7 @@ namespace Notentool.Controllers
                 return NotFound();
             }
 
-            var semester = await _context.Semesters
-                .FirstOrDefaultAsync(m => m.SemesterID == id);
+            var semester = await _semestersService.GetSemesterByIdAsync(id.Value);
             if (semester == null)
             {
                 return NotFound();
@@ -157,18 +127,8 @@ namespace Notentool.Controllers
         [Route("delete/{id}")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var semester = await _context.Semesters
-                .Include(s => s.Moduls)
-                .ThenInclude(m => m.Grades)
-                .FirstOrDefaultAsync(s => s.SemesterID == id);
-            _context.Semesters.Remove(semester);
-            await _context.SaveChangesAsync();
+            await _semestersService.DeleteSemesterAsync(id);
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool SemesterExists(int id)
-        {
-            return _context.Semesters.Any(e => e.SemesterID == id);
         }
     }
 }

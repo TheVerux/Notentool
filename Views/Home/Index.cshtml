@@ -1,7 +1,74 @@
-﻿@{
+﻿@using Notentool.Models.Entities
+@model IEnumerable<Notentool.Models.Entities.Modul>
+
+@{
     ViewData["Title"] = "Home";
+    var semester = ViewData["Semester"] as Semester;
 }
 
 <div class="text-center">
     <h1 class="display-4">Willkommen beim Notentool</h1>
 </div>
+
+@{
+    if (semester != null)
+    {
+        var semesterAverage = Average.CalculateForSemester(semester);
+        <div>
+            <h4>Dein aktuelles Semester: @semester.Name</h4>
+        </div>
+        <div>
+            <p>Durchschnitt: @semesterAverage</p>
+        </div>
+        <hr />
+
+        <div>
+            <p>
+                <a asp-controller="Semesters" asp-action="Index">Hier</a> findest du eine Übersicht aller Semester
+            </p>
+        </div>
+        <div>
+            <p>
+                Erstelle <a asp-controller="Moduls" asp-action="Create" asp-route-semesterId="@semester.SemesterID">hier</a> ein neues Modul
+            </p>
+        </div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>Aktionen</th>
+                <th>Durchschnitt des Semesters</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model)
+            {
+                var average = Average.CalculateForModul(item);
+                <tr>
+                    <td>
+                        <a asp-area="" asp-controller="Grades" asp-action="Index" asp-route-modulId="@item.ModulID">
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </a>
+                    </td>
+                    <td>
+                        <a asp-controller="Moduls" asp-action="Edit" asp-route-semesterId="@semester.SemesterID" asp-route-id="@item.ModulID">Bearbeiten</a> |
+                        <a asp-controller="Moduls" asp-action="Delete" asp-route-semesterId="@semester.SemesterID" asp-route-id="@item.ModulID">Löschen</a>
+                    </td>
+                    <td>
+                        <p>@average</p>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="text-center">
+            <p>Du hast noch kein Semester erstellt. Erstelle <a asp-controller="Semesters" asp-action="Create">hier</a> ein neues Semester</p>
+        </div>
+    }
+}
+

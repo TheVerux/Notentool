@@ -1,10 +1,21 @@
-﻿@model IEnumerable<Notentool.Models.Entities.Grade>
+﻿@using Notentool.Models.Entities
+@model IEnumerable<Notentool.Models.Entities.Grade>
 
 @{
     ViewData["Title"] = "Noten";
+    var modul = ViewData["Modul"] as Modul;
 }
 
-<h1>Deine Noten</h1>
+<div>
+    <a asp-controller="Moduls" asp-action="Index" asp-route-semesterId="@modul.SemesterID">← Zurück zum Semester</a>
+</div>
+<div>
+    <h4>Du befindest dich momentan im Modul: <br />@modul.Name</h4>
+</div>
+<div>
+    <p>Durchschnitt: @Average.CalculateForModul(modul)</p>
+</div>
+<hr />
 
 <p>
     Erstelle <a asp-action="Create" asp-route-modulId="@ViewContext.RouteData.Values["modulId"]">hier</a> eine neue Note
@@ -21,27 +32,29 @@
             <th>
                 @Html.DisplayNameFor(model => model.Gewichtung)
             </th>
-            <th></th>
+            <th>Aktionen</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Note)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Gewichtung)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-modulId="@ViewContext.RouteData.Values["modulId"]" asp-route-id="@item.GradeID">Edit</a> |
-                <a asp-action="Details" asp-route-modulId="@ViewContext.RouteData.Values["modulId"]" asp-route-id="@item.GradeID">Details</a> |
-                <a asp-action="Delete" asp-route-modulId="@ViewContext.RouteData.Values["modulId"]" asp-route-id="@item.GradeID">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <a asp-action="Details" asp-route-modulId="@ViewContext.RouteData.Values["modulId"]" asp-route-id="@item.GradeID">
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Note)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Gewichtung)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-modulId="@ViewContext.RouteData.Values["modulId"]" asp-route-id="@item.GradeID">Bearbeiten</a> |
+                    <a asp-action="Delete" asp-route-modulId="@ViewContext.RouteData.Values["modulId"]" asp-route-id="@item.GradeID">Löschen</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

@@ -6,8 +6,16 @@ using System.Threading.Tasks;
 
 namespace Notentool.Models
 {
-    public static class Durchschnitt
+    /// <summary>
+    /// Klasse um den Durchschnitt eines Semesters oder eines Moduls zu berechnen
+    /// </summary>
+    public static class Average
     {
+        /// <summary>
+        /// Berechnet den Durchschnitt für ein Semester
+        /// </summary>
+        /// <param name="semester">Das Semester für welches den Durchschnitt berechnet werden soll</param>
+        /// <returns><c>double</c></returns>
         public static double CalculateForSemester(Semester semester)
         { 
             IEnumerable<Grade> grades = new List<Grade>();
@@ -22,6 +30,11 @@ namespace Notentool.Models
             return 0;
         }
 
+        /// <summary>
+        /// Berechnet den Durchschnitt für ein Modul
+        /// </summary>
+        /// <param name="modul">Das Modul für welches den Durchschnitt berechnet werden soll</param>
+        /// <returns></returns>
         public static double CalculateForModul(Modul modul)
         {
             IEnumerable<Grade> grades = new List<Grade>();

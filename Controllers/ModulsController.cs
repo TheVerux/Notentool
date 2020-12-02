@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Notentool;
 using Notentool.Models.Entities;
+using Notentool.Services;
 
 namespace Notentool.Controllers
 {
@@ -15,42 +16,23 @@ namespace Notentool.Controllers
     [Route("semesters/{semesterId}/[controller]")]
     public class ModulsController : Controller
     {
-        private readonly Context _context;
+        private readonly IModulsService _modulsService;
+        private readonly ISemestersService _semestersService;
 
-        public ModulsController(Context context)
+        public ModulsController(IModulsService modulsService, ISemestersService semestersService)
         {
-            _context = context;
+            _modulsService = modulsService;
+            _semestersService = semestersService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index(int semesterId)
         {
-            var semester = await _context.Semesters.FirstOrDefaultAsync(s => s.SemesterID == semesterId);
-
+            var semester = await _semestersService.GetSemesterByIdAsync(semesterId);
             ViewData["Semester"] = semester;
-            var moduls = await _context.Moduls.Where(m => m.Semester.SemesterID == semesterId)
-                .Include(m => m.Grades)
-                .ToListAsync();
+
+            var moduls = _modulsService.GetAllModuls(semesterId);
             return View(moduls);
-        }
-
-        [HttpGet]
-        [Route("{id}")]
-        public async Task<IActionResult> Details(int semesterId, int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var modul = await _context.Moduls
-                .FirstOrDefaultAsync(m => m.ModulID == id);
-            if (modul == null)
-            {
-                return NotFound();
-            }
-
-            return View(modul);
         }
 
         [HttpGet]
@@ -67,10 +49,8 @@ namespace Notentool.Controllers
         {
             if (ModelState.IsValid)
             {
-                var semester = await _context.Semesters.FirstOrDefaultAsync(s => s.SemesterID == semesterId);
-                modul.Semester = semester;
-                _context.Add(modul);
-                await _context.SaveChangesAsync();
+                var semester = await _semestersService.GetSemesterByIdAsync(semesterId);
+                await _modulsService.CreateModulAsync(modul, semester);
                 return RedirectToAction(nameof(Index), new { semesterId });
             }
             return View(modul);
@@ -85,7 +65,7 @@ namespace Notentool.Controllers
                 return NotFound();
             }
 
-            var modul = await _context.Moduls.FindAsync(id);
+            var modul = await _modulsService.GetModulByIdAsync(id.Value);
             if (modul == null)
             {
                 return NotFound();
@@ -107,17 +87,12 @@ namespace Notentool.Controllers
             {
                 try
                 {
-                    if (modul.Semester == null)
-                    {
-                        var semester = await _context.Semesters.FirstOrDefaultAsync(s => s.SemesterID == semesterId);
-                        modul.Semester = semester;
-                    }
-                    _context.Update(modul);
-                    await _context.SaveChangesAsync();
+                    var semester = await _semestersService.GetSemesterByIdAsync(semesterId);
+                    await _modulsService.UpdateModulAsync(modul, semester);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ModulExists(modul.ModulID))
+                    if (!_modulsService.ModulExists(modul.ModulID))
                     {
                         return NotFound();
                     }
@@ -140,8 +115,7 @@ namespace Notentool.Controllers
                 return NotFound();
             }
 
-            var modul = await _context.Moduls
-                .FirstOrDefaultAsync(m => m.ModulID == id);
+            var modul = await _modulsService.GetModulByIdAsync(id.Value);
             if (modul == null)
             {
                 return NotFound();
@@ -155,17 +129,8 @@ namespace Notentool.Controllers
         [Route("delete/{id}")]
         public async Task<IActionResult> DeleteConfirmed(int semesterId, int id)
         {
-            var modul = await _context.Moduls
-                .Include(m => m.Grades)
-                .FirstOrDefaultAsync(m => m.ModulID == id);
-            _context.Moduls.Remove(modul);
-            await _context.SaveChangesAsync();
+            await _modulsService.DeleteModulAsync(id);
             return RedirectToAction(nameof(Index), new { semesterId });
-        }
-
-        private bool ModulExists(int id)
-        {
-            return _context.Moduls.Any(e => e.ModulID == id);
         }
     }
 }

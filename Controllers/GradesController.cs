@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Notentool;
 using Notentool.Models.Entities;
+using Notentool.Services;
 
 namespace Notentool.Controllers
 {
@@ -15,19 +11,22 @@ namespace Notentool.Controllers
     [Route("moduls/{modulId}/[controller]")]
     public class GradesController : Controller
     {
-        private readonly Context _context;
+        private readonly IGradesService _gradesService;
+        private readonly IModulsService _modulsService;
 
-        public GradesController(Context context)
+        public GradesController(IGradesService gradesService, IModulsService modulsService)
         {
-            _context = context;
+            _gradesService = gradesService;
+            _modulsService = modulsService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index(int modulId)
         {
-            var modul = await _context.Moduls.FirstOrDefaultAsync(m => m.ModulID == modulId);
+            var modul = await _modulsService.GetModulByIdAsync(modulId);
+            ViewData["Modul"] = modul;
 
-            var grades = await _context.Grades.Where(g => g.Modul.ModulID == modulId).ToListAsync();
+            var grades = _gradesService.GetAllGrades(modulId);
             return View(grades);
         }
 
@@ -40,8 +39,7 @@ namespace Notentool.Controllers
                 return NotFound();
             }
 
-            var grade = await _context.Grades
-                .FirstOrDefaultAsync(m => m.GradeID == id);
+            var grade = await _gradesService.GetGradeByIdAsync(id.Value);
             if (grade == null)
             {
                 return NotFound();
@@ -64,10 +62,8 @@ namespace Notentool.Controllers
         {
             if (ModelState.IsValid)
             {
-                var modul = await _context.Moduls.FirstOrDefaultAsync(m => m.ModulID == modulId);
-                grade.Modul = modul;
-                _context.Add(grade);
-                await _context.SaveChangesAsync();
+                var modul = await _modulsService.GetModulByIdAsync(modulId);
+                await _gradesService.CreateGradeAsync(grade, modul);
                 return RedirectToAction(nameof(Index), new { modulId });
             }
             return View(grade);
@@ -82,7 +78,7 @@ namespace Notentool.Controllers
                 return NotFound();
             }
 
-            var grade = await _context.Grades.FindAsync(id);
+            var grade = await _gradesService.GetGradeByIdAsync(id.Value);
             if (grade == null)
             {
                 return NotFound();
@@ -104,17 +100,12 @@ namespace Notentool.Controllers
             {
                 try
                 {
-                    if (grade.Modul == null)
-                    {
-                        var modul = await _context.Moduls.FirstOrDefaultAsync(m => m.ModulID == modulId);
-                        grade.Modul = modul;
-                    }
-                    _context.Update(grade);
-                    await _context.SaveChangesAsync();
+                    var modul = await _modulsService.GetModulByIdAsync(modulId);
+                    await _gradesService.UpdateGradeAsync(grade, modul);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!GradeExists(grade.GradeID))
+                    if (!_gradesService.GradeExists(grade.GradeID))
                     {
                         return NotFound();
                     }
@@ -137,8 +128,7 @@ namespace Notentool.Controllers
                 return NotFound();
             }
 
-            var grade = await _context.Grades
-                .FirstOrDefaultAsync(m => m.GradeID == id);
+            var grade = await _gradesService.GetGradeByIdAsync(id.Value);
             if (grade == null)
             {
                 return NotFound();
@@ -152,15 +142,8 @@ namespace Notentool.Controllers
         [Route("delete/{id}")]
         public async Task<IActionResult> DeleteConfirmed(int modulId, int id)
         {
-            var grade = await _context.Grades.FindAsync(id);
-            _context.Grades.Remove(grade);
-            await _context.SaveChangesAsync();
+            await _gradesService.DeleteGradeAsync(id);
             return RedirectToAction(nameof(Index), new { modulId });
-        }
-
-        private bool GradeExists(int id)
-        {
-            return _context.Grades.Any(e => e.GradeID == id);
         }
     }
 }

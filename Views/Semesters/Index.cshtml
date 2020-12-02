@@ -19,21 +19,25 @@
             <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
-            <th></th>
+            <th>Aktionen</th>
+            <th>Durchschnitt des Semesters</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-            var average = Durchschnitt.CalculateForSemester(item);
+            var average = Average.CalculateForSemester(item);
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Name)
+                    <a asp-area="" asp-controller="Moduls" asp-action="Index" asp-route-semesterId="@item.SemesterID">
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </a>
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.SemesterID">Edit</a> |
-                    <a asp-action="Delete" asp-route-id="@item.SemesterID">Delete</a> |
-                    <a asp-area="" asp-controller="Moduls" asp-action="Index" asp-route-semesterId="@item.SemesterID">Details</a>
+                    <a asp-action="Edit" asp-route-id="@item.SemesterID">Bearbeiten</a> |
+                    <a asp-action="Delete" asp-route-id="@item.SemesterID">Löschen</a>
+                </td>
+                <td>
                     <p>Durchschnitt: @average</p>
                 </td>
             </tr>

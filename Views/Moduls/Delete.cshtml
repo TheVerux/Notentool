@@ -4,9 +4,11 @@
     ViewData["Title"] = "Löschen";
 }
 
-<h1>Löschen</h1>
-
-<h3>Willst du dies wirklich löschen?</h3>
+<div>
+    <a asp-action="Index" asp-route-semesterId="@ViewContext.RouteData.Values["semesterId"]">← Zurück zum Semester</a>
+</div>
+<h1>Modul @Model.Name löschen</h1>
+<h3>Willst du dieses Modul wirklich löschen?</h3>
 <div>
     <h4>Modul</h4>
     <hr />
@@ -21,7 +23,7 @@
     
     <form asp-action="Delete" asp-route-semesterId="@ViewContext.RouteData.Values["semesterId"]">
         <input type="hidden" asp-for="ModulID" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index" asp-route-semesterId="@ViewContext.RouteData.Values["semesterId"]">Zurück</a>
+        <input type="submit" value="Löschen" class="btn btn-danger" /> |
+        <a asp-action="Index" asp-route-semesterId="@ViewContext.RouteData.Values["semesterId"]">Abbrechen</a>
     </form>
 </div>

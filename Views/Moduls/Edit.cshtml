@@ -4,9 +4,10 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Editieren</h1>
-
-<h4>Modul</h4>
+<div>
+    <a asp-action="Index" asp-route-semesterId="@ViewContext.RouteData.Values["semesterId"]">← Zurück zum Semester</a>
+</div>
+<h1>Modul @Model.Name bearbeiten</h1>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -19,14 +20,11 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Speichern" class="btn btn-primary" />
+                <input type="submit" value="Speichern" class="btn btn-primary" /> |
+                <a asp-action="Index" asp-route-semesterId="@ViewContext.RouteData.Values["semesterId"]">Abbrechen</a>
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index" asp-route-semesterId="@ViewContext.RouteData.Values["semesterId"]">Zurück</a>
 </div>
 
 @section Scripts {
