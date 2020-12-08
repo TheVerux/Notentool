@@ -28,7 +28,9 @@ namespace Notentool.Services
 
         public async Task<Modul> GetModulByIdAsync(int id)
         {
-            return await _context.Moduls.FindAsync(id);
+            return await _context.Moduls
+                .Include(m => m.Grades)
+                .FirstOrDefaultAsync(m => m.ModulID == id);
         }
 
         public async Task CreateModulAsync(Modul modul, Semester semester)

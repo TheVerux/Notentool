@@ -29,7 +29,10 @@ namespace Notentool.Services
 
         public async Task<Semester> GetSemesterByIdAsync(int id)
         {
-            return await _context.Semesters.FindAsync(id);
+            return await _context.Semesters
+                .Include(s => s.Moduls)
+                .ThenInclude(m => m.Grades)
+                .FirstOrDefaultAsync(s => s.SemesterID == id);
         }
 
         public async Task CreateSemesterAsync(Semester semester, Benutzeraccount user)
