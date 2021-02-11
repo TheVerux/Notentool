@@ -1,0 +1,39 @@
+﻿@using Notentool.Models.Entities
+@model IEnumerable<Notentool.Models.Entities.Modul>
+
+@{
+    ViewData["Title"] = "Index";
+    var semester = ViewData["Semester"] as Semester;
+}
+
+<h1>Index</h1>
+<h2>Currently in semester @semester.Name @semester.SemesterID</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-semesterId="@ViewContext.RouteData.Values["semesterId"]" asp-route-id="@item.ModulID">Edit</a> |
+                <a asp-action="Details" asp-route-semesterId="@ViewContext.RouteData.Values["semesterId"]" asp-route-id="@item.ModulID">Details</a> |
+                <a asp-action="Delete" asp-route-semesterId="@ViewContext.RouteData.Values["semesterId"]" asp-route-id="@item.ModulID">Delete</a> |
+                <a asp-area="" asp-controller="Grades" asp-action="Index" asp-route-modulId="@item.ModulID">Grades</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
